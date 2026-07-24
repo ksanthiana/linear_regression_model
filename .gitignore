@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Flutter
+**/build/
+**/.dart_tool/
+**/.flutter-plugin-dependencies
+**/android/.gradle/
+**/ios/Pods/
+**/ios/.symlinks/
+*.iml
+.idea/
+
+# OS
+.DS_Store
