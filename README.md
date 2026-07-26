@@ -1,17 +1,41 @@
-# crop_yield_predictor
+# African Crop Yield Prediction
 
-A new Flutter project.
+GitHub repository: https://github.com/ksanthiana/linear_regression_model
 
-## Getting Started
+This repository contains a complete submission for crop yield prediction, including:
 
-This project is a starting point for a Flutter application.
+- `summative/linear_regression/multivariate.ipynb` — the notebook used to explore and train the linear regression model
+- `summative/API/prediction.py` — the FastAPI backend that serves crop yield predictions and supports model retraining
+- `summative/FlutterApp/crop_yield_predictor` — the Flutter application for interacting with the prediction API
 
-A few resources to get you started if this is your first Flutter project:
+## Project Structure
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- `summative/linear_regression/` — data exploration, preprocessing, and model training resources
+- `summative/API/` — API backend code, model artifacts, and deployment configuration
+- `summative/FlutterApp/crop_yield_predictor/` — Flutter frontend application
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Running the API
+
+1. Open a terminal in `summative/API`
+2. Install dependencies from `requirements.txt`
+3. Run the API:
+
+```bash
+uvicorn prediction:app --reload
+```
+
+4. Open Swagger UI at `http://127.0.0.1:8000/docs`
+
+## Running the Flutter App
+
+1. Open the Flutter project at `summative/FlutterApp/crop_yield_predictor`
+2. Run the app with Flutter tooling:
+
+```bash
+flutter run
+```
+
+## Notes
+
+- The API expects crop observation input data and returns predicted yield in metric tons per hectare.
+- The Flutter app is designed to connect to the prediction API and display results.
