@@ -71,25 +71,12 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# CORS reasoning (see README / video for full explanation):
-# - allow_origins is an explicit allow-list, NOT "*". The Flutter mobile app
-#   itself is a native client and is not subject to browser CORS at all, so
-#   the only real consumers of this policy are: (a) the hosted Swagger UI
-#   (same-origin, browser always allows this) and (b) a local Flutter *web*
-#   build during development, served from localhost. We list those explicit
-#   origins instead of a wildcard so a malicious third-party website cannot
-#   embed a hidden fetch() call against this API using a victim's browser.
-# - allow_methods is restricted to what the API actually exposes (GET/POST).
-# - allow_headers is restricted to what the client actually needs to send.
-# - allow_credentials=False because this API is stateless and uses no
-#   cookies/auth sessions, so there is nothing to protect by allowing
-#   credentialed cross-origin requests -- turning it on would only widen
-#   the attack surface for no functional benefit.
+
 ALLOWED_ORIGINS = [
-    "http://localhost:3000",     # local Flutter web dev server
+    "http://localhost:3000",     
     "http://localhost:8080",
     "http://127.0.0.1:3000",
-    "https://crop-yield-predictor.onrender.com",  # replace with your deployed Render URL
+    "https://crop-yield-predictor.onrender.com",  
 ]
 
 app.add_middleware(
