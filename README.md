@@ -4,7 +4,7 @@ GitHub repository: https://github.com/ksanthiana/linear_regression_model
 
 This repository contains a complete submission for crop yield prediction, including:
 
-- `summative/linear_regression/multivariate.ipynb` — the notebook used to explore and train the linear regression model
+- https://colab.research.google.com/drive/1VlZyIWZBxHLf75Ao8CgltGlBqe9Gx0U2?usp=sharing — the notebook used to explore and train the linear regression model
 - `summative/API/prediction.py` — the FastAPI backend that serves crop yield predictions and supports model retraining
 - `summative/FlutterApp/crop_yield_predictor` — the Flutter application for interacting with the prediction API
 
