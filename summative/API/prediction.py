@@ -19,13 +19,12 @@ Docs (Swagger UI): http://<host>/docs
 import io
 import json
 from pathlib import Path
-from typing import Literal
 
 import joblib
 import pandas as pd
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from sklearn.compose import ColumnTransformer
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
@@ -44,18 +43,40 @@ TRAINING_DATA_PATH = BASE_DIR / "model" / "training_data.csv"
 with open(METADATA_PATH) as f:
     METADATA = json.load(f)
 
-model = joblib.load(MODEL_PATH)
-
 CATEGORICAL_FEATURES = METADATA["categorical_features"]
 NUMERIC_FEATURES = METADATA["numeric_features"]
 FEATURE_ORDER = METADATA["feature_order"]
 CATEGORIES = METADATA["categories"]
 RANGES = METADATA["feature_ranges"]
 
-CountryT = Literal[tuple(CATEGORIES["country"])]
-ProductT = Literal[tuple(CATEGORIES["product"])]
-SeasonT = Literal[tuple(CATEGORIES["season_name"])]
-ProdSystemT = Literal[tuple(CATEGORIES["crop_production_system"])]
+CountryT = str
+ProductT = str
+SeasonT = str
+ProdSystemT = str
+
+
+def load_model():
+    try:
+        return joblib.load(MODEL_PATH)
+    except Exception:
+        training_data = pd.read_csv(TRAINING_DATA_PATH)
+        X = training_data[CATEGORICAL_FEATURES + NUMERIC_FEATURES]
+        y = training_data["yield"]
+        X_train, _, y_train, _ = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        preprocessor = ColumnTransformer(
+            transformers=[
+                ("cat", OneHotEncoder(handle_unknown="ignore"), CATEGORICAL_FEATURES),
+                ("num", StandardScaler(), NUMERIC_FEATURES),
+            ]
+        )
+        pipe = Pipeline([("prep", preprocessor), ("model", LinearRegression())])
+        pipe.fit(X_train, y_train)
+        joblib.dump(pipe, MODEL_PATH)
+        return pipe
+
+
+model = load_model()
 
 # ---------------------------------------------------------------------------
 # App & CORS
@@ -107,6 +128,20 @@ app.add_middleware(
 class CropObservation(BaseModel):
     """One subnational crop-season observation."""
 
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "country": "Burundi",
+            "product": "Maize",
+            "season_name": "Main",
+            "crop_production_system": "Rainfed (PS)",
+            "planting_year": 2022,
+            "planting_month": 9,
+            "harvest_year": 2023,
+            "harvest_month": 2,
+            "area": 1500.0,
+        }
+    })
+
     country: CountryT = Field(..., description="Country")
     product: ProductT = Field(..., description="Crop type")
     season_name: SeasonT = Field(..., description="Growing season label")
@@ -116,22 +151,6 @@ class CropObservation(BaseModel):
     harvest_year: int = Field(..., ge=int(RANGES["harvest_year"][0]), le=int(RANGES["harvest_year"][1]) + 1)
     harvest_month: int = Field(..., ge=1, le=12)
     area: float = Field(..., ge=RANGES["area"][0], le=RANGES["area"][1], description="Plot/observation area in hectares")
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "country": "Burundi",
-                "product": "Maize",
-                "season_name": "Main",
-                "crop_production_system": "Rainfed (PS)",
-                "planting_year": 2022,
-                "planting_month": 9,
-                "harvest_year": 2023,
-                "harvest_month": 2,
-                "area": 1500.0,
-            }
-        }
-
 
 class PredictionResponse(BaseModel):
     predicted_yield_t_per_ha: float
@@ -184,7 +203,8 @@ async def retrain(file: UploadFile = File(...)):
     FEATURE_ORDER + a 'yield' target column) to retrain the deployed
     Linear Regression model on existing + new data.
     """
-    if not file.filename.endswith(".csv"):
+    filename = file.filename or ""
+    if not filename.lower().endswith(".csv"):
         raise HTTPException(status_code=400, detail="Please upload a .csv file.")
 
     raw = await file.read()
