@@ -3,12 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
-// ---------------------------------------------------------------------------
-// CONFIG: point this at your deployed Render API base URL.
-// Example after deploying: "https://crop-yield-predictor.onrender.com"
-// For local Android emulator development, use: "http://10.0.2.2:8000"
-// ---------------------------------------------------------------------------
-const String kApiBaseUrl = "https://crop-yield-predictor.onrender.com";
+
+const String kApiBaseUrl = "http://10.0.2.2:8000";
 
 const List<String> kCountries = [
   "Angola", "Benin", "Burkina Faso", "Burundi", "Cameroon",
