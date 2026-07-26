@@ -93,19 +93,26 @@ app = FastAPI(
 )
 
 
+import os
+
+# CORS Configuration
+# For security, we explicitly list allowed origins rather than using "*"
+# This prevents malicious third-party websites from making requests to our API
 ALLOWED_ORIGINS = [
-    "http://localhost:3000",     
-    "http://localhost:8080",
-    "http://127.0.0.1:3000",
-    "https://crop-yield-predictor.onrender.com",  
+    "http://localhost:3000",          # local Flutter web dev
+    "http://localhost:8080",          # local Flutter web dev
+    "http://127.0.0.1:3000",          # local development
+    "http://10.0.2.2:8000",           # Android emulator
+    "https://crop-yield-predictor.onrender.com",  # production Render URL
+    # Add any additional Render URLs here after deployment
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
-    allow_credentials=False,
-    allow_methods=["GET", "POST"],
-    allow_headers=["Content-Type"],
+    allow_credentials=False,  # No credentials needed; API is stateless
+    allow_methods=["GET", "POST"],  # Only GET and POST operations needed
+    allow_headers=["Content-Type"],  # Only Content-Type header needed for JSON
 )
 
 
