@@ -15,8 +15,6 @@ My mission is to strengthen food security and agricultural infrastructure planni
 - **Prediction endpoint:** `POST https://crop-yield-predictor-3oy8.onrender.com/predict`
 - **Retraining endpoint:** `POST https://crop-yield-predictor-3oy8.onrender.com/retrain` (upload a CSV of new observations; the model retrains and hot-swaps only if it performs at least as well as the currently deployed model)
 
-> Note: the API runs on Render's free tier, which sleeps after ~15 minutes of inactivity[Uploading linear_regression.ipynb…]()
- the first request after a pause can take up to a minute while the service wakes up.
 
 Example request body for `/predict`:
 
