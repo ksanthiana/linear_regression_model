@@ -103,7 +103,7 @@ ALLOWED_ORIGINS = [
     "http://localhost:8080",          # local Flutter web dev
     "http://127.0.0.1:3000",          # local development
     "http://10.0.2.2:8000",           # Android emulator
-    "https://crop-yield-predictor.onrender.com",  # production Render URL
+    "https://crop-yield-predictor-3oy8.onrender.com",  # production Render URL
     # Add any additional Render URLs here after deployment
 ]
 
